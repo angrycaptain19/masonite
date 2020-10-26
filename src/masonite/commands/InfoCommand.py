@@ -21,9 +21,8 @@ class InfoCommand(Command):
     def handle(self):
         from ..cli import application
 
-        rows = []
+        rows = [["System Information", self._get_system_info()]]
 
-        rows.append(["System Information", self._get_system_info()])
         mem = math.ceil(psutil.virtual_memory().total / 1024 / 1024 / 1024.0)
         rows.append(["System Memory", str(mem) + " GB"])
         rows.append(["Python Version", self._get_python_info()])

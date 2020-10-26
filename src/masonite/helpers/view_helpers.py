@@ -31,11 +31,7 @@ def back(location=None):
 
         request = container.make("Request")
         intended_route = request.session.get("__intend")
-        if intended_route:
-            location = intended_route
-        else:
-            location = request.path
-
+        location = intended_route or request.path
     return Markup("<input type='hidden' name='__back' value='{0}'>".format(location))
 
 

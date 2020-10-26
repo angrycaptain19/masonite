@@ -37,7 +37,4 @@ class Csrf:
         Returns:
             bool
         """
-        if self.request.get_cookie("csrf_token", decrypt=False) == token:
-            return True
-        else:
-            return False
+        return self.request.get_cookie("csrf_token", decrypt=False) == token

@@ -61,9 +61,7 @@ class SessionCookieDriver(SessionContract, BaseDriver):
         Returns:
             bool
         """
-        if self.get(key):
-            return True
-        return False
+        return bool(self.get(key))
 
     def all(self, flash_only=False):
         """Get all session data.

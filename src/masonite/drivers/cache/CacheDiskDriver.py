@@ -78,9 +78,7 @@ class CacheDiskDriver(CacheContract, BaseCacheDriver):
 
         cache_for_time = cache_for_time + time.time()
 
-        key = self.store(key + ":" + str(cache_for_time), value, extension, location)
-
-        return key
+        return self.store(key + ":" + str(cache_for_time), value, extension, location)
 
     def get(self, key):
         """Get the data from a key in the cache."""
@@ -136,9 +134,7 @@ class CacheDiskDriver(CacheContract, BaseCacheDriver):
             glob_path = cache_path + key + ":*"
 
         find_template = glob.glob(glob_path)
-        if find_template:
-            return True
-        return False
+        return bool(find_template)
 
     def is_valid(self, key):
         """Check if a valid cache."""
@@ -155,11 +151,7 @@ class CacheDiskDriver(CacheContract, BaseCacheDriver):
                     os.path.splitext(cache_file[0])[0].split(":")[1]
                 )
             except IndexError:
-                if self.cache_forever:
-                    return True
-
-                return False
-
+                return bool(self.cache_forever)
             if cache_timestamp > time.time():
                 return True
 

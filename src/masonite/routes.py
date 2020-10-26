@@ -90,10 +90,7 @@ class Route:
         Returns:
             bool
         """
-        if self.environ["REQUEST_METHOD"] == "POST":
-            return True
-
-        return False
+        return self.environ["REQUEST_METHOD"] == "POST"
 
     def is_not_get_request(self):
         """Check if current request is not a get request.
@@ -101,10 +98,7 @@ class Route:
         Returns:
             bool
         """
-        if not self.environ["REQUEST_METHOD"] == "GET":
-            return True
-
-        return False
+        return self.environ["REQUEST_METHOD"] != "GET"
 
     def compile(self, key, to=""):
         self.route_compilers.update({key: to})
@@ -165,8 +159,7 @@ class BaseHttpRoute:
         return self
 
     def view(self, route, template, dictionary={}):
-        view_route = ViewRoute(self.method_type, route, template, dictionary)
-        return view_route
+        return ViewRoute(self.method_type, route, template, dictionary)
 
     def _find_controller(self, controller):
         """Find the controller to attach to the route.

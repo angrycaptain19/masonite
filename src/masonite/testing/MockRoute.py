@@ -75,10 +75,11 @@ class MockRoute:
 
         response = json.loads(self.get_string_response())
         if isinstance(key, dict):
-            for item_key, key_value in key.items():
-                if not Dot().dot(item_key, response, False) == key_value:
-                    return False
-            return True
+            return all(
+                Dot().dot(item_key, response, False) == key_value
+                for item_key, key_value in key.items()
+            )
+
         return Dot().dot(key, response, False)
 
     def assertHasJson(self, key, value):
@@ -158,8 +159,11 @@ class MockRoute:
         response = json.loads(self.get_string_response())
         try:
             assert (
-                not len(response[key]) == amount
-            ), "{} is equal to {} but should not be".format(len(response[key]), amount)
+                len(response[key]) != amount
+            ), "{} is equal to {} but should not be".format(
+                len(response[key]), amount
+            )
+
         except TypeError:
             raise TypeError(
                 "The json response key of: {} is not iterable but has the value of {}".format(

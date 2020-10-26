@@ -22,9 +22,9 @@ class TestCompact(unittest.TestCase):
         self.assertEqual(compact(x, y, {'z': 'foo'}), {'x': 'hello', 'y': 'world', 'z': 'foo'})
 
     def test_exception_on_too_many(self):
-        x = 'hello'
-        y = 'world'
         with self.assertRaises(ValueError):
+            x = 'hello'
+            y = 'world'
             compact(x, y, 'z')
 
     def test_compact_throws_exceptions(self):

@@ -126,7 +126,6 @@ class TestMailable(TestCase):
 
     def setUp(self):
         super().setUp()
-        pass
 
     def test_works(self):
         mailable = MailManager(self.container).driver('smtp').mailable(ForgotPasswordMailable())
