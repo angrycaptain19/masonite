@@ -58,9 +58,7 @@ class SessionMemoryDriver(SessionContract, BaseDriver):
             bool
         """
         data = self.__collect_data()
-        if data and key in data:
-            return True
-        return False
+        return bool(data and key in data)
 
     def all(self):
         """Get all session data.
@@ -173,7 +171,7 @@ class SessionMemoryDriver(SessionContract, BaseDriver):
             return session[key]
 
         # If the key is set and is not in the session
-        if key and key not in session:
+        if key:
             return None
 
         # If the session is still an empty dictionary

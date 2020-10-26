@@ -83,16 +83,15 @@ class Request(Extendable):
         """
         name = str(name)
 
-        if "." in name and isinstance(
-            self.request_variables.get(name.split(".")[0]), dict
-        ):
-            return clean_request_input(
-                DictDot().dot(name, self.request_variables, default=default),
-                clean=clean,
-            )
+        if "." in name:
+            if isinstance(self.request_variables.get(name.split(".")[0]), dict):
+                return clean_request_input(
+                    DictDot().dot(name, self.request_variables, default=default),
+                    clean=clean,
+                )
 
-        elif "." in name:
-            name = dot(name, "{1}[{.}]")
+            else:
+                name = dot(name, "{1}[{.}]")
 
         return clean_request_input(
             self.request_variables.get(name, default), clean=clean, quote=quote
@@ -135,10 +134,7 @@ class Request(Extendable):
         Returns:
             bool
         """
-        if self.environ["REQUEST_METHOD"] == "POST":
-            return True
-
-        return False
+        return self.environ["REQUEST_METHOD"] == "POST"
 
     def is_not_get_request(self):
         """Check if the current request is not a get request.
@@ -146,10 +142,7 @@ class Request(Extendable):
         Returns:
             bool
         """
-        if not self.environ["REQUEST_METHOD"] == "GET":
-            return True
-
-        return False
+        return self.environ["REQUEST_METHOD"] != "GET"
 
     def __set_request_method(self):
         """Private method for manually setting the request method.
@@ -206,12 +199,7 @@ class Request(Extendable):
         Returns:
             dict
         """
-        only_vars = {}
-
-        for name in names:
-            only_vars[name] = self.request_variables.get(name)
-
-        return only_vars
+        return {name: self.request_variables.get(name) for name in names}
 
     def without(self, *names):
         """Return the request variables in a dictionary without specified values.
@@ -219,13 +207,11 @@ class Request(Extendable):
         Returns:
             dict
         """
-        only_vars = {}
-
-        for name in self.request_variables:
-            if name not in names:
-                only_vars[name] = self.request_variables.get(name)
-
-        return only_vars
+        return {
+            name: self.request_variables.get(name)
+            for name in self.request_variables
+            if name not in names
+        }
 
     def load_app(self, app):
         """Load the container into the request class.
@@ -325,10 +311,7 @@ class Request(Extendable):
         if not value.filename:
             return value.value
 
-        if value.filename:
-            return value
-
-        return False
+        return value
 
     def app(self):
         """Return the application container.
@@ -482,11 +465,7 @@ class Request(Extendable):
     def route_exists(self, url):
         web_routes = self.container.make("WebRoutes")
 
-        for route in web_routes:
-            if route.route_url == url:
-                return True
-
-        return False
+        return any(route.route_url == url for route in web_routes)
 
     def _get_status_code_by_value(self, value):
         for key, status in self.statuses.items():
@@ -565,11 +544,7 @@ class Request(Extendable):
             list -- A list of tuples.
         """
 
-        headers = []
-        for key, value in self._headers.items():
-            headers.append((key, value))
-
-        return headers
+        return [(key, value) for key, value in self._headers.items()]
 
     def reset_headers(self):
         """Reset all headers being set.
@@ -648,11 +623,7 @@ class Request(Extendable):
         Returns:
             self
         """
-        if encrypt:
-            value = Sign(self.encryption_key).sign(value)
-        else:
-            value = value
-
+        value = Sign(self.encryption_key).sign(value) if encrypt else value
         if expires:
             expires = "Expires={0};".format(cookie_expire_time(expires))
 
@@ -770,11 +741,7 @@ class Request(Extendable):
         Returns:
             self
         """
-        if self._test_user:
-            self.user_model = self._test_user
-        else:
-            self.user_model = user_model
-
+        self.user_model = self._test_user or user_model
         return self
 
     def reset_user(self):
@@ -973,10 +940,11 @@ class Request(Extendable):
 
         redirect_url = self.input("__back")
 
-        if not redirect_url and default:
-            return self.redirect(default)
-        elif not redirect_url and not default:
-            return self.redirect(self.path)  # Some global default?
+        if not redirect_url:
+            if default:
+                return self.redirect(default)
+            else:
+                return self.redirect(self.path)  # Some global default?
 
         return self.redirect(redirect_url)
 
@@ -1015,10 +983,7 @@ class Request(Extendable):
         Returns:
             bool
         """
-        if self._get_named_route(name, params) == self.path:
-            return True
-
-        return False
+        return self._get_named_route(name, params) == self.path
 
     def contains(self, route, show=None):
         """If the specified URI is in the current URI path.

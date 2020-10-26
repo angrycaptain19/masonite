@@ -5,11 +5,7 @@ import sys
 
 
 def create_or_append_config(location, name=False):
-    if name:
-        file_name = name
-    else:
-        file_name = os.path.basename(location)
-
+    file_name = name or os.path.basename(location)
     # import it into the config directory
     config_directory = os.path.join(os.getcwd(), "config")
 

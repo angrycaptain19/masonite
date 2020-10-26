@@ -297,10 +297,7 @@ class App:
 
         for _, provider_class in self.providers.items():
 
-            if (
-                parameter.annotation == provider_class
-                or parameter.annotation == provider_class.__class__
-            ):
+            if parameter.annotation in [provider_class, provider_class.__class__]:
                 obj = provider_class
                 self.fire_hook("resolve", parameter, obj)
 

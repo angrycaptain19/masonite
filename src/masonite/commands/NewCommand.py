@@ -76,11 +76,12 @@ class NewCommand(Command):
                     get_zip_url = requests.get(
                         "https://api.github.com/repos/MasoniteFramework/cookie-cutter/releases"
                     )
-                    tags = []
+                    tags = [
+                        release["tag_name"].replace("v", "")
+                        for release in get_zip_url.json()
+                        if release["prerelease"] is False
+                    ]
 
-                    for release in get_zip_url.json():
-                        if release["prerelease"] is False:
-                            tags.append(release["tag_name"].replace("v", ""))
 
                     tags = sorted(
                         tags, key=lambda v: [int(i) for i in v.split(".")], reverse=True

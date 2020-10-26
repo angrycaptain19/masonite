@@ -24,11 +24,7 @@ class BaseUploadDriver(BaseDriver):
         if "*" in extensions and len(extensions) > 1:
             raise ValueError("When uses '*' isn't allowed accept other file type.")
 
-        if extensions == ["*"]:
-            self.accept_file_types = None
-        else:
-            self.accept_file_types = args
-
+        self.accept_file_types = None if extensions == ["*"] else args
         return self
 
     def validate_extension(self, filename):
@@ -40,9 +36,10 @@ class BaseUploadDriver(BaseDriver):
         Raises:
             FileTypeException -- Thrown if the specified file extension is incorrect.
         """
-        if self.accept_file_types is not None:
-            if not filename.endswith(self.accept_file_types):
-                raise FileTypeException("The file extension is not supported.")
+        if self.accept_file_types is not None and not filename.endswith(
+            self.accept_file_types
+        ):
+            raise FileTypeException("The file extension is not supported.")
 
         return True
 

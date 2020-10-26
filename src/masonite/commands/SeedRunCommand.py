@@ -15,7 +15,7 @@ class SeedRunCommand(Command):
     def handle(self):
 
         table = self.argument("table").lower()
-        if not table == "none":
+        if table != "none":
             seeder = "--seeder {}_table_seeder".format(table.lower())
         else:
             seeder = ""

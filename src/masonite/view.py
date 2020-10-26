@@ -242,13 +242,6 @@ class View(Responsable):
                 [PackageLoader(location[0], "/".join(location[1:-1]))]
                 + self.environments
             )
-            self.env = Environment(
-                loader=loader,
-                autoescape=select_autoescape(["html", "xml"]),
-                extensions=self._jinja_extensions,
-                line_statement_prefix="@",
-            )
-
         else:
             loader = ChoiceLoader(
                 [PackageLoader("resources", "templates")] + self.environments
@@ -258,12 +251,12 @@ class View(Responsable):
             # This is sort of a hack for now
             loader.searchpath = ""
 
-            self.env = Environment(
-                loader=loader,
-                autoescape=select_autoescape(["html", "xml"]),
-                extensions=self._jinja_extensions,
-                line_statement_prefix="@",
-            )
+        self.env = Environment(
+            loader=loader,
+            autoescape=select_autoescape(["html", "xml"]),
+            extensions=self._jinja_extensions,
+            line_statement_prefix="@",
+        )
 
         self.env.filters.update(self._filters)
 
